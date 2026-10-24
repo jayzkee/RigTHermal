@@ -589,29 +589,37 @@ async function pushToNeon(rig) {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        name: rig.name, cpu: rig.cpu, gpu: rig.gpu,
-        total_wattage: rig.base, btu_hr: rig.btu, monthly_cost: rig.cost,
+        name: rig.name, 
+        cpu: rig.cpu, 
+        gpu: rig.gpu,
+        total_wattage: rig.base, 
+        btu_hr: rig.btu, 
+        monthly_cost: rig.cost,
       }),
       signal: ctrl.signal,
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.ok) return { ok: false, error: data.error || 'HTTP ' + res.status };
-    return { ok: true, id: data.id };
+    
+    // ✅ Check res.ok (HTTP 200-299) and accept returned record ID or data.id
+    if (!res.ok) return { ok: false, error: data.error || 'HTTP ' + res.status };
+    return { ok: true, id: data.id || data.id };
   } catch (e) {
     return { ok: false, error: e && e.name === 'AbortError' ? 'Timed out' : 'Not reachable' };
   } finally {
     clearTimeout(timer);
   }
 }
-
 async function pingNeon() {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 5000);
   try {
     const res = await fetch(API, { method: 'GET', signal: ctrl.signal });
-    const data = await res.json().catch(() => ({}));
-    return res.ok && data.ok === true;
-  } catch (e) { return false; } finally { clearTimeout(timer); }
+    return res.ok; // ✅ Checks for HTTP 200 OK
+  } catch (e) { 
+    return false; 
+  } finally { 
+    clearTimeout(timer); 
+  }
 }
 
 /* ---------- app ---------- */
