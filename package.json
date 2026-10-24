@@ -1,0 +1,18 @@
+{
+  "name": "rigthermal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Custom PC power budget and thermal calculator with optional Neon PostgreSQL sync, ready for Netlify.",
+  "scripts": {
+    "dev": "npx netlify dev",
+    "build": "echo \"No build step required for static assets\"",
+    "test": "node test/logic.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0"
+  }
+}
